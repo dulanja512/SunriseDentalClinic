@@ -17,7 +17,7 @@ public final class DBConnection {
     private static final String DEFAULT_URL =
             "jdbc:mysql://127.0.0.1:3306/sunrise_dental_clinic?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
     private static final String DEFAULT_USER = "root";
-    private static final String DEFAULT_PASSWORD = "Dm!@2001";
+    private static final String DEFAULT_PASSWORD = "";
 
     private final String url;
     private final String user;
