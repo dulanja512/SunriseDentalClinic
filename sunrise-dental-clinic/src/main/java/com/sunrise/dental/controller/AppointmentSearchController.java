@@ -3,6 +3,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 @WebServlet("/appointment-search") public class AppointmentSearchController extends HttpServlet {
+    private static final long serialVersionUID = 1L;
     protected void doPost(HttpServletRequest r,HttpServletResponse s)throws ServletException,java.io.IOException {
         try {
             r.setAttribute("appointment",AppContext.APPT.find(r.getParameter("appointmentNumber")));
