@@ -1,2 +1,51 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<style>body{font-family:Arial;background:#f4f7fb;margin:0;color:#1f2937}.nav{background:#0f766e;color:white;padding:14px 24px}.nav a{color:white;margin-right:18px;text-decoration:none}.box{max-width:1100px;margin:30px auto;background:white;padding:25px;border-radius:12px;box-shadow:0 2px 12px #0001}input,select{padding:10px;margin:5px;width:95%;box-sizing:border-box}button{padding:10px 16px;background:#0f766e;color:white;border:0;border-radius:6px;cursor:pointer}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.card{padding:18px;background:#ecfeff;border-radius:10px}table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid #ddd;text-align:left}.err{color:#b91c1c}.ok{color:#047857}</style><div class="nav"><b>Sunrise Dental Clinic</b> &nbsp; <a href="dashboard">Dashboard</a><a href="appointments">Appointments</a><a href="reports">Reports</a><a href="help">Help</a><a href="logs">Logs</a><form style="display:inline" method="post" action="auth"><input type="hidden" name="action" value="logout"><button>Logout</button></form></div><div class="box"><h2>Patient Bill / Receipt</h2><%if(request.getAttribute("error")!=null){%><p class="err"><%=request.getAttribute("error")%></p><%}%><c:if test="${bill != null}"><p>Appointment # ${bill.appointmentId}</p><table><tr><td>Consultation Fee</td><td>Rs. ${bill.consultationFee}</td></tr><tr><td>Treatment Cost</td><td>Rs. ${bill.treatmentCost}</td></tr><tr><td>Discount</td><td>Rs. ${bill.discount}</td></tr><tr><th>Total</th><th>Rs. ${bill.totalAmount}</th></tr></table><p>Pricing strategy: ${bill.pricingStrategy}</p><button onclick="window.print()">Print Receipt</button></c:if></div>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Billing - Sunrise Dental</title>
+</head>
+<body>
+<jsp:include page="includes/header.jsp"/>
+<main class="container">
+  <div class="page-head">
+    <div><h1>Patient Bill / Receipt</h1><div class="muted">Treatment price is taken directly from the selected treatment. No hidden consultation fee is added.</div></div>
+    <a class="btn btn-light" href="${pageContext.request.contextPath}/appointments">Back</a>
+  </div>
+  <jsp:include page="includes/flash.jsp"/>
+  <c:if test="${not empty error}"><div class="alert alert-error"><c:out value="${error}"/></div></c:if>
+
+  <c:if test="${not empty bill}">
+    <section class="panel receipt" style="max-width:760px;margin-left:auto;margin-right:auto">
+      <div class="receipt-head">
+        <div><h2>Sunrise Dental Clinic</h2><div class="muted">Official treatment receipt</div></div>
+        <div class="receipt-number"><span class="muted">Bill No.</span><strong>#${bill.billId}</strong></div>
+      </div>
+
+      <c:if test="${not empty appointment}">
+        <div class="receipt-info grid grid-3">
+          <div><span class="muted">Patient</span><strong><c:out value="${appointment.patient.fullName}"/></strong></div>
+          <div><span class="muted">Appointment</span><strong><c:out value="${appointment.appointmentNumber}"/></strong></div>
+          <div><span class="muted">Treatment</span><strong><c:out value="${appointment.treatment.treatmentName}"/></strong></div>
+        </div>
+      </c:if>
+
+      <div class="table-wrap">
+        <table style="min-width:0">
+          <thead><tr><th>Description</th><th style="text-align:right">Amount</th></tr></thead>
+          <tbody>
+            <tr><td>Treatment Cost</td><td style="text-align:right">Rs. <fmt:formatNumber value="${bill.treatmentCost}" minFractionDigits="2" maxFractionDigits="2"/></td></tr>
+            <c:if test="${bill.consultationFee gt 0}"><tr><td>Additional Consultation Fee</td><td style="text-align:right">Rs. <fmt:formatNumber value="${bill.consultationFee}" minFractionDigits="2" maxFractionDigits="2"/></td></tr></c:if>
+            <c:if test="${bill.discount gt 0}"><tr><td>Discount</td><td style="text-align:right">- Rs. <fmt:formatNumber value="${bill.discount}" minFractionDigits="2" maxFractionDigits="2"/></td></tr></c:if>
+            <tr class="total-row"><th>Total Payable</th><th style="text-align:right">Rs. <fmt:formatNumber value="${bill.totalAmount}" minFractionDigits="2" maxFractionDigits="2"/></th></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="receipt-footer"><span>Pricing: <c:out value="${bill.pricingStrategy}"/></span><button type="button" onclick="window.print()">Print Receipt</button></div>
+    </section>
+  </c:if>
+</main>
+</body>
+</html>
