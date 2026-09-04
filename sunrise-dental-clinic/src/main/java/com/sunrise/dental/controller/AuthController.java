@@ -5,6 +5,7 @@ import javax.servlet.annotation.*;
 import com.sunrise.dental.model.User;
 import com.sunrise.dental.util.SessionUtil;
 @WebServlet("/auth") public class AuthController extends HttpServlet {
+    private static final long serialVersionUID = 1L;
     protected void doPost(HttpServletRequest r,HttpServletResponse s)throws ServletException,java.io.IOException {
         String action=r.getParameter("action");
         try {
