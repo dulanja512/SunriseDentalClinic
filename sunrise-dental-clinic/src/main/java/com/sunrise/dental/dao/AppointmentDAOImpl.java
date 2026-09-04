@@ -57,7 +57,7 @@ public class AppointmentDAOImpl implements AppointmentDAO {
         }
     }
     public boolean updateStatus(int id,Appointment.Status s) {
-        try(Connection c=DBConnectionFactory.getConnection();PreparedStatement p=c.prepareStatement("UPDATE appointments SET status=? WHERE appointment_id=?")) {
+        try(Connection c=DBConnectionFactory.getConnection();PreparedStatement p=c.prepareStatement("UPDATE appointments SET status=? WHERE appointment_id=? AND status='BOOKED'")) {
             p.setString(1,s.name());
             p.setInt(2,id);
             return p.executeUpdate()>0;
