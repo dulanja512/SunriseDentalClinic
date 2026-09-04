@@ -1,20 +1,23 @@
 package com.sunrise.dental.filter;
+
+import com.sunrise.dental.util.SessionUtil;
 import javax.servlet.*;
 import javax.servlet.http.*;
-import java.io.*;
-import com.sunrise.dental.util.SessionUtil;
+import java.io.IOException;
+
 public class AuthenticationFilter implements Filter {
-    public void doFilter(ServletRequest q,ServletResponse p,FilterChain c)throws IOException,ServletException {
-        HttpServletRequest r=(HttpServletRequest)q;
-        String path=r.getRequestURI().substring(r.getContextPath().length());
-        if(path.equals("/login")||path.equals("/auth")||path.equals("/api")||path.equals("/api/appointments")) {
-            c.doFilter(q,p);
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        HttpServletRequest r = (HttpServletRequest) request;
+        HttpServletResponse s = (HttpServletResponse) response;
+        String path = r.getRequestURI().substring(r.getContextPath().length());
+
+        boolean publicPath = path.equals("/") || path.equals("/index.jsp") || path.equals("/login") || path.equals("/auth")
+                || path.startsWith("/assets/") || path.startsWith("/api/");
+        if (publicPath || SessionUtil.user(r) != null) {
+            chain.doFilter(request, response);
             return;
         }
-        if(SessionUtil.user(r)==null) {
-            ((HttpServletResponse)p).sendRedirect(r.getContextPath()+"/login");
-            return;
-        }
-        c.doFilter(q,p);
+        s.sendRedirect(r.getContextPath() + "/login");
     }
 }
